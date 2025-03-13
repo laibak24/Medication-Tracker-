@@ -6,7 +6,9 @@ export default function HomeScreen() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("login");  // Replaces the current screen with "login"
+    setTimeout(() => {
+      router.replace("/login"); // Ensure path starts with `/`
+    }, 100);
   }, []);
 
   return (
