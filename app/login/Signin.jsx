@@ -1,9 +1,9 @@
-import { View, Text } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import { StyleSheet } from 'react-native';
 import React from 'react'
 import colours from '../../constant/colours';
 import { TextInput } from 'react-native';
-
+import { useRouter } from "expo-router";
 
 export default function Signin() {
 
@@ -18,7 +18,28 @@ export default function Signin() {
         <TextInput placeholder='Email' style = {styles.textinput} />
 
         <Text style= {{marginTop: 10}}> Password </Text>
-        <TextInput placeholder='Password' style = {styles.textinput} />
+        <TextInput placeholder='Password' style = {styles.textinput}
+        secureTextEntry= {true} />
+
+        <TouchableOpacity style={{
+                  marginTop: 40,
+                  backgroundColor:colours.DBLUE,
+                  paddingVertical: 12,
+                  paddingHorizontal: 30,
+                  borderRadius: 25,
+                  elevation: 5,
+                }}>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color: "#FFFFFF",
+                    fontWeight: "600",
+                    textAlign: 'center'
+                  }}
+                >
+                  Sign In
+                </Text>
+              </TouchableOpacity>
       </View>
     </View>
   )
