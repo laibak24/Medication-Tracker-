@@ -60,7 +60,7 @@ export default function WelcomeScreen() {
 
       <TouchableOpacity
         disabled={!isReady} // Disable button if navigation is not ready
-        onPress={() => isReady && router.push("/login")}
+        onPress={() => isReady && router.push("/login/Signin")}
         style={{
           marginTop: 40,
           backgroundColor: isReady ? colours.DBLUE : colours.LBLUE, // Lighter blue when disabled
@@ -78,7 +78,42 @@ export default function WelcomeScreen() {
             fontWeight: "600",
           }}
         >
-          {isReady ? "Continue" : "Loading..."}
+          {isReady ? "Sign In" : "Loading..."}
+        </Text>
+      </TouchableOpacity>
+
+      <Text
+        style={{
+          fontSize: 16,
+          color: colours.LRED,
+          textAlign: "center",
+          marginTop: 30,
+          fontStyle: "italic",
+        }}
+      >
+        Dont have an account
+      </Text>
+      <TouchableOpacity
+        disabled={!isReady} // Disable button if navigation is not ready
+        onPress={() => isReady && router.push("/login")}
+        style={{
+          marginTop: 10,
+          backgroundColor: isReady ? colours.DBLUE : colours.LBLUE, // Lighter blue when disabled
+          paddingVertical: 12,
+          paddingHorizontal: 30,
+          borderRadius: 25,
+          elevation: 5,
+          opacity: isReady ? 1 : 0.6, // Reduce opacity when not ready
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 18,
+            color: "#FFFFFF",
+            fontWeight: "600",
+          }}
+        >
+          {isReady ? "Create An Account" : "Loading..."}
         </Text>
       </TouchableOpacity>
     </View>
