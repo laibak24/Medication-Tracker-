@@ -2,6 +2,7 @@ import { Text, View, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { ImageBackground} from 'react-native';
+import colours from "../../constant/colours";
 
 export default function WelcomeScreen() {
   const router = useRouter();
@@ -39,7 +40,7 @@ export default function WelcomeScreen() {
         style={{
           fontSize: 32,
           fontWeight: "bold",
-          color: "#C1121F",
+          color: colours.DRED,
           textAlign: "center",
         }}
       >
@@ -48,7 +49,7 @@ export default function WelcomeScreen() {
       <Text
         style={{
           fontSize: 16,
-          color: "#780000",
+          color: colours.LRED,
           textAlign: "center",
           marginTop: 10,
           fontStyle: "italic",
@@ -62,7 +63,7 @@ export default function WelcomeScreen() {
         onPress={() => isReady && router.push("/login")}
         style={{
           marginTop: 40,
-          backgroundColor: isReady ? "#42A5F5" : "#90CAF9", // Lighter blue when disabled
+          backgroundColor: isReady ? colours.DBLUE : colours.LBLUE, // Lighter blue when disabled
           paddingVertical: 12,
           paddingHorizontal: 30,
           borderRadius: 25,
