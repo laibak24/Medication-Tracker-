@@ -1,6 +1,7 @@
 import { Text, View, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
+import { ImageBackground} from 'react-native';
 
 export default function WelcomeScreen() {
   const router = useRouter();
@@ -14,29 +15,40 @@ export default function WelcomeScreen() {
   }, []);
 
   return (
+    
     <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#E3F2FD",
-        padding: 20,
-      }}
-    >
+    style={{
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "transparent", // Ensure it's transparent so background is visible
+      padding: 20,
+    }}
+  >
+      <ImageBackground
+  source={require('../../assets/images/loginbckg.jpg')}
+  style={{
+    flex: 1,
+    width: "110%",
+    height: "102%",
+    position: "absolute",
+    
+  }}
+/>
       <Text
         style={{
           fontSize: 32,
           fontWeight: "bold",
-          color: "#1565C0",
+          color: "#C1121F",
           textAlign: "center",
         }}
       >
-        Welcome to MedTrack
+        Welcome to MediQure
       </Text>
       <Text
         style={{
           fontSize: 16,
-          color: "#1E88E5",
+          color: "#780000",
           textAlign: "center",
           marginTop: 10,
           fontStyle: "italic",
