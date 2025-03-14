@@ -1,7 +1,7 @@
-import { View, Text, TouchableOpacity, TextInput, ToastAndroid } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, ToastAndroid, Platform, Alert } from 'react-native';
 import { StyleSheet } from 'react-native';
 import colours from '../../constant/colours';
-import { useRouter } from 'expo-router';
+ // import { useRouter } from 'expo-router';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../config/FirebaseConfig";
 import React, { useState } from 'react';
@@ -26,8 +26,19 @@ export default function Signup() {
             const errorMessage = error.message;
             // ..
             console.log(errorCode);
-            if (errorCode=='auth/email-already-in-use'){
-                ToastAndroid.show('Email already exists.',ToastAndroid.BOTTOM)
+            if (errorCode === "auth/email-already-in-use") {
+              if (Platform.OS === "android") {
+                ToastAndroid.show("Email already exists.", ToastAndroid.BOTTOM);
+              } else {
+                Alert.alert("Error", "Email already exists.");
+              }
+            }
+            else if (errorCode === "auth/weak-password") {
+              if (Platform.OS === "android") {
+                ToastAndroid.show("Password is not strong", ToastAndroid.BOTTOM);
+              } else {
+                Alert.alert("Error", "Password is not strong.");
+              }
             }
           });
     }
@@ -91,6 +102,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     borderRadius: 8,
     marginTop: 10,
+    color: "#000000"
   },
   button:{
     marginTop: 40,
