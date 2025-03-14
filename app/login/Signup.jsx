@@ -10,6 +10,7 @@ export default function Signup() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [username, setUsername] = useState('');
 
     const router = useRouter(); // ✅ Fix: Initialize router
 
@@ -28,6 +29,7 @@ export default function Signup() {
                 const user = userCredential.user;
                 console.log(user);
                 router.push('/login/Signin'); // ✅ Fix: Proper navigation after signup
+                
             })
             .catch((error) => {
                 const errorCode = error.code;
@@ -62,10 +64,12 @@ export default function Signup() {
             <Text style={styles.Header}>Create Account</Text>
             <Text style={styles.p1}>Sign up to get started</Text>
             <View>
-                <Text> Username </Text>
-                <TextInput placeholder='Username' style={styles.textinput} />
-
-                <Text style={{ marginTop: 10 }}> Email </Text>
+            <Text> Username </Text>
+                <TextInput 
+                    placeholder='Username' 
+                    style={styles.textinput} 
+                    onChangeText={(value) => setUsername(value)}
+                />
                 <TextInput 
                     placeholder='Email' 
                     style={styles.textinput} 

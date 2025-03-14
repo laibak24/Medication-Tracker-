@@ -4,3 +4,5 @@ whenever updating anything that requires code structure understanding or constan
 added colours in the constant folder so just import the folder to make it easier to access the colours
 colours are labelled as DRED LRED BIEGE DBLUE LBLUE, self explanatory
 
+login/index.jsx : welcome page
+tabs/index.jsx  : home page 
