@@ -1,7 +1,7 @@
 import { Text, View, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
-import { ImageBackground} from 'react-native';
+import { ImageBackground } from 'react-native';
 import colours from "../../constant/colours";
 
 export default function WelcomeScreen() {
@@ -16,26 +16,24 @@ export default function WelcomeScreen() {
   }, []);
 
   return (
-    
     <View
-    style={{
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: "transparent", // Ensure it's transparent so background is visible
-      padding: 20,
-    }}
-  >
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "transparent", // Ensure it's transparent so background is visible
+        padding: 20,
+      }}
+    >
       <ImageBackground
-  source={require('../../assets/images/loginbckg.jpg')}
-  style={{
-    flex: 1,
-    width: "110%",
-    height: "102%",
-    position: "absolute",
-    
-  }}
-/>
+        source={require('../../assets/images/loginbckg.jpg')}
+        style={{
+          flex: 1,
+          width: "110%",
+          height: "102%",
+          position: "absolute",
+        }}
+      />
       <Text
         style={{
           fontSize: 32,
@@ -78,42 +76,7 @@ export default function WelcomeScreen() {
             fontWeight: "600",
           }}
         >
-          {isReady ? "Sign In" : "Loading..."}
-        </Text>
-      </TouchableOpacity>
-
-      <Text
-        style={{
-          fontSize: 16,
-          color: colours.LRED,
-          textAlign: "center",
-          marginTop: 30,
-          fontStyle: "italic",
-        }}
-      >
-        Dont have an account
-      </Text>
-      <TouchableOpacity
-        disabled={!isReady} // Disable button if navigation is not ready
-        onPress={() => isReady && router.push("/login")}
-        style={{
-          marginTop: 10,
-          backgroundColor: isReady ? colours.DBLUE : colours.LBLUE, // Lighter blue when disabled
-          paddingVertical: 12,
-          paddingHorizontal: 30,
-          borderRadius: 25,
-          elevation: 5,
-          opacity: isReady ? 1 : 0.6, // Reduce opacity when not ready
-        }}
-      >
-        <Text
-          style={{
-            fontSize: 18,
-            color: "#FFFFFF",
-            fontWeight: "600",
-          }}
-        >
-          {isReady ? "Create An Account" : "Loading..."}
+          {isReady ? "Continue" : "Loading..."}
         </Text>
       </TouchableOpacity>
     </View>
