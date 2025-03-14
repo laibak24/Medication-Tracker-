@@ -9,22 +9,35 @@ import React, { useState } from 'react';
 export default function Signup() {
     const [email,setEmail] = useState();
     const [password,setPassword] = useState();
+    const [confirmPassword,setconfirmPassword] = useState();
 
     const OnCreateAccount=()=>{
-        if(!email||!password){
-            ToastAndroid.show('Please fill all the details.', ToastAndroid.BOTTOM)
+        if(!email||!password || !confirmPassword){
+          if (Platform.OS === "android") {
+            ToastAndroid.show("Email already exists.", ToastAndroid.BOTTOM);
+          } else {
+            Alert.alert("Error", "Please fill all the details.");
+          }
+          return;
         }
+
+        if (password !== confirmPassword) {
+          if (Platform.OS === "android") {
+              ToastAndroid.show("Passwords do not match!", ToastAndroid.BOTTOM);
+          } else {
+              Alert.alert("Error", "Passwords do not match!");
+          }
+          return;
+      }
          createUserWithEmailAndPassword(auth, email, password)
           .then((userCredential) => {
-            // Signed up 
             const user = userCredential.user;
             console.log(user);
-            // ...
           })
           .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
-            // ..
+
             console.log(errorCode);
             if (errorCode === "auth/email-already-in-use") {
               if (Platform.OS === "android") {
@@ -62,7 +75,7 @@ export default function Signup() {
         />
 
         <Text style={{ marginTop: 10 }}> Confirm Password </Text>
-        <TextInput placeholder='Confirm Password' style={styles.textinput} secureTextEntry={true} />
+        <TextInput placeholder='Confirm Password' style={styles.textinput} secureTextEntry={true} onChangeText={(value)=>setconfirmPassword(value)} />
 
         <TouchableOpacity
           style={styles.button} onPress={OnCreateAccount}>
