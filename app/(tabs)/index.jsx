@@ -5,12 +5,6 @@ import { useRouter } from "expo-router";
 export default function HomeScreen() {
   const router = useRouter();
 
-  useEffect(() => {
-    setTimeout(() => {
-      router.replace("/login"); // Ensure path starts with `/`
-    }, 100);
-  }, []);
-
   return (
     <View
       style={{

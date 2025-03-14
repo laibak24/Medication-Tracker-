@@ -1,40 +1,81 @@
-import { View, Text, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Platform, Alert, ToastAndroid } from 'react-native';
 import { StyleSheet } from 'react-native';
-import React from 'react';
 import colours from '../../constant/colours';
 import { useRouter } from "expo-router";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../config/FirebaseConfig";
+import React, { useState } from 'react';
 
 export default function Signin() {
   const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const OnSignInClick = () => {
+    if (!email || !password) {
+      if (Platform.OS === "android") {
+        ToastAndroid.show('Please fill all the details.', ToastAndroid.LONG);
+      } else {
+        Alert.alert("Error", "Please fill all the details.");
+      }
+      return;
+    }
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        console.log(userCredential.user);
+        router.replace('(tabs)');
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        console.log(errorCode);
+        
+        if (errorCode === 'auth/invalid-credential') {
+          if (Platform.OS === "android") {
+            ToastAndroid.show('Invalid Email or Password.', ToastAndroid.LONG);
+          } else {
+            Alert.alert("Error", "Invalid Email or Password.");
+          }
+        }
+      });
+  };
 
   return (
     <View style={{ padding: 25 }}>
       <Text style={styles.Header}>Welcome Back</Text>
       <Text style={styles.p1}>Please enter your credentials</Text>
-      
-      <View>    
+
+      <View>
         <Text>Email</Text>
-        <TextInput placeholder='Email' style={styles.textinput} />
+        <TextInput
+          placeholder='Email'
+          style={styles.textinput}
+          onChangeText={(value) => setEmail(value)}
+          value={email}
+        />
 
         <Text style={{ marginTop: 10 }}>Password</Text>
-        <TextInput placeholder='Password' style={styles.textinput} secureTextEntry={true} />
+        <TextInput
+          placeholder='Password'
+          style={styles.textinput}
+          secureTextEntry={true}
+          onChangeText={(value) => setPassword(value)}
+          value={password}
+        />
 
-        <TouchableOpacity 
-          style={styles.button} 
-          onPress={() => router.push('/dashboard')}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={OnSignInClick}
         >
           <Text style={styles.buttonText}>Sign In</Text>
         </TouchableOpacity>
 
         <Text style={styles.signupText}>Don't have an account?</Text>
-        
-        <TouchableOpacity 
-          onPress={() => router.push('/login/Signup')}
-        >
+
+        <TouchableOpacity onPress={() => router.push('/login/Signup')}>
           <Text style={styles.signupLink}>Create One</Text>
         </TouchableOpacity>
-
-        
       </View>
     </View>
   );
