@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, TextInput, ToastAndroid, Platform, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, ToastAndroid, Platform, Alert} from 'react-native';
 import { StyleSheet } from 'react-native';
 import colours from '../../constant/colours';
 import { useRouter } from 'expo-router';
@@ -23,7 +23,6 @@ export default function Signup() {
             }
             return;
         }
-
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 const user = userCredential.user;
@@ -70,6 +69,7 @@ export default function Signup() {
                     style={styles.textinput} 
                     onChangeText={(value) => setUsername(value)}
                 />
+                <Text style={{ marginTop: 10}}>Email </Text>
                 <TextInput 
                     placeholder='Email' 
                     style={styles.textinput} 
@@ -98,6 +98,7 @@ export default function Signup() {
             </View>
         </View>
     );
+    
 }
 
 const styles = StyleSheet.create({
