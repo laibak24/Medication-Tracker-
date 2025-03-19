@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../config/FirebaseConfig";
 import React, { useState } from 'react';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function Signup() {
     const [email, setEmail] = useState('');
@@ -12,7 +13,7 @@ export default function Signup() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [username, setUsername] = useState('');
 
-    const router = useRouter(); // ✅ Fix: Initialize router
+    const router = useRouter();
 
     const OnCreateAccount = () => {
         if (!email || !password || !confirmPassword) {
@@ -23,24 +24,24 @@ export default function Signup() {
             }
             return;
         }
+        if (password !== confirmPassword) {
+            if (Platform.OS === "android") {
+                ToastAndroid.show("Passwords do not match.", ToastAndroid.LONG);
+            } else {
+                Alert.alert("Error", "Passwords do not match.");
+            }
+            return;
+        }
+    
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 const user = userCredential.user;
                 console.log(user);
-                router.push('/login/Signin'); // ✅ Fix: Proper navigation after signup
-                
+                router.push('/login/Signin'); 
             })
             .catch((error) => {
                 const errorCode = error.code;
                 console.log(errorCode);
-                if (password !== confirmPassword) {
-                    if (Platform.OS === "android") {
-                        ToastAndroid.show("Passwords do not match.", ToastAndroid.LONG);
-                    } else {
-                        Alert.alert("Error", "Passwords do not match.");
-                    }
-                    return;
-                }
         
                 if (errorCode === "auth/email-already-in-use") {
                     if (Platform.OS === "android") {
@@ -60,23 +61,29 @@ export default function Signup() {
 
     return (
         <View style={{ padding: 25 }}>
+            {/* Back Button */}
+            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <Ionicons name="arrow-back" size={28} color={colours.DRED} />
+            </TouchableOpacity>
+
             <Text style={styles.Header}>Create Account</Text>
             <Text style={styles.p1}>Sign up to get started</Text>
+
             <View>
-            <Text> Username </Text>
+                <Text>Username</Text>
                 <TextInput 
                     placeholder='Username' 
                     style={styles.textinput} 
                     onChangeText={(value) => setUsername(value)}
                 />
-                <Text style={{ marginTop: 10}}>Email </Text>
+                <Text style={{ marginTop: 10}}>Email</Text>
                 <TextInput 
                     placeholder='Email' 
                     style={styles.textinput} 
                     onChangeText={(value) => setEmail(value)} 
                 />
 
-                <Text style={{ marginTop: 10 }}> Password </Text>
+                <Text style={{ marginTop: 10 }}>Password</Text>
                 <TextInput 
                     placeholder='Password' 
                     style={styles.textinput} 
@@ -84,12 +91,12 @@ export default function Signup() {
                     onChangeText={(value) => setPassword(value)} 
                 />
 
-                <Text style={{ marginTop: 10 }}> Confirm Password </Text>
+                <Text style={{ marginTop: 10 }}>Confirm Password</Text>
                 <TextInput 
                     placeholder='Confirm Password' 
                     style={styles.textinput} 
                     secureTextEntry={true} 
-                    onChangeText={(value) => setConfirmPassword(value)} // ✅ Fix: Moved inside tag
+                    onChangeText={(value) => setConfirmPassword(value)}
                 />
 
                 <TouchableOpacity style={styles.button} onPress={OnCreateAccount}>
@@ -98,10 +105,19 @@ export default function Signup() {
             </View>
         </View>
     );
-    
 }
 
 const styles = StyleSheet.create({
+    backButton: {
+        position: 'absolute',
+        top: 40,
+        left: 20,
+        zIndex: 10,
+    },
+    backArrow: {
+        fontSize: 30,
+        color: colours.DRED,
+    },
     Header: {
         fontSize: 50,
         fontWeight: 'bold',
