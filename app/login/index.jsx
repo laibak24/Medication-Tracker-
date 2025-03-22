@@ -69,10 +69,10 @@ export default function WelcomeScreen() {
 
       {/* Medicine Box Image (No Animation) */}
       <Image
-        source={require("../../assets/images/med2.png")}
+        source={require("../../assets/images/doctor.png")}
         style={{
-          width: 300,
-          height: 300,
+          width: 360,
+          height: 360,
           resizeMode: "contain",
           marginBottom: 0,
         }}

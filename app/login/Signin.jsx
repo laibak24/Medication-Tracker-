@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../config/FirebaseConfig";
 import React, { useState } from 'react';
+import { setLocalStorage } from '../../service/Storage';
 
 export default function Signin() {
   const router = useRouter();
@@ -22,23 +23,28 @@ export default function Signin() {
     }
 
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        console.log(userCredential.user);
-        router.replace('(tabs)');
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        console.log(errorCode);
-        
-        if (errorCode === 'auth/invalid-credential') {
-          if (Platform.OS === "android") {
-            ToastAndroid.show('Invalid Email or Password.', ToastAndroid.LONG);
-          } else {
-            Alert.alert("Error", "Invalid Email or Password.");
-          }
-        }
-      });
+  .then(async (userCredential) => {
+    const user = userCredential.user;
+    console.log(user);
+    
+    // Store user data in AsyncStorage
+    await setLocalStorage('userDetail', user);
+    
+    router.replace('(tabs)');
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    console.log(errorCode);
+
+    if (errorCode === 'auth/invalid-credential') {
+      if (Platform.OS === "android") {
+        ToastAndroid.show('Invalid Email or Password.', ToastAndroid.LONG);
+      } else {
+        Alert.alert("Error", "Invalid Email or Password.");
+      }
+    }
+  });
+
   };
 
   return (

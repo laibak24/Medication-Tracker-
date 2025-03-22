@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, TextInput, ToastAndroid, Platform, Alert} from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, ToastAndroid, Platform, Alert } from 'react-native';
 import { StyleSheet } from 'react-native';
 import colours from '../../constant/colours';
 import { useRouter } from 'expo-router';
@@ -6,6 +6,10 @@ import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../config/FirebaseConfig";
 import React, { useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { updateProfile } from "firebase/auth";
+
+
 
 export default function Signup() {
     const [email, setEmail] = useState('');
@@ -15,8 +19,8 @@ export default function Signup() {
 
     const router = useRouter();
 
-    const OnCreateAccount = () => {
-        if (!email || !password || !confirmPassword) {
+    const OnCreateAccount = async () => {
+        if (!email || !password || !confirmPassword || !username) {
             if (Platform.OS === "android") {
                 ToastAndroid.show('Please fill all the details.', ToastAndroid.LONG);
             } else {
@@ -24,6 +28,7 @@ export default function Signup() {
             }
             return;
         }
+
         if (password !== confirmPassword) {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Passwords do not match.", ToastAndroid.LONG);
@@ -33,37 +38,50 @@ export default function Signup() {
             return;
         }
     
-        createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                console.log(user);
-                router.push('/login/Signin'); 
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                console.log(errorCode);
-        
-                if (errorCode === "auth/email-already-in-use") {
-                    if (Platform.OS === "android") {
-                        ToastAndroid.show("Email already exists.", ToastAndroid.LONG);
-                    } else {
-                        Alert.alert("Error", "Email already exists.");
-                    }
-                } else if (errorCode === "auth/weak-password") {
-                    if (Platform.OS === "android") {
-                        ToastAndroid.show("Password is not strong.", ToastAndroid.LONG);
-                    } else {
-                        Alert.alert("Error", "Password is not strong.");
-                    }
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            console.log(user);
+
+            // Placeholder function: Implement AsyncStorage or SecureStore as needed
+            await AsyncStorage.setItem("userDetail", JSON.stringify({ displayName: username }));
+            const storedUser = await AsyncStorage.getItem("userDetail");
+            console.log("Stored User:", storedUser);
+        // Update Firebase Profile
+            await updateProfile(user, { displayName: username });
+
+            router.push('/login/Signin');
+        } catch (error) {
+            const errorCode = error.code;
+            console.log(errorCode);
+
+            if (errorCode === "auth/email-already-in-use") {
+                if (Platform.OS === "android") {
+                    ToastAndroid.show("Email already exists.", ToastAndroid.LONG);
+                } else {
+                    Alert.alert("Error", "Email already exists.");
                 }
-            });
+            } else if (errorCode === "auth/weak-password") {
+                if (Platform.OS === "android") {
+                    ToastAndroid.show("Password is not strong.", ToastAndroid.LONG);
+                } else {
+                    Alert.alert("Error", "Password is not strong.");
+                }
+            } else {
+                if (Platform.OS === "android") {
+                    ToastAndroid.show("An error occurred. Please try again.", ToastAndroid.LONG);
+                } else {
+                    Alert.alert("Error", "An error occurred. Please try again.");
+                }
+            }
+        }
     };
 
     return (
         <View style={{ padding: 25 }}>
             {/* Back Button */}
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={28} color={colours.DRED} />
+                <Ionicons name="arrow-back" size={28} color={colours.DRED} />
             </TouchableOpacity>
 
             <Text style={styles.Header}>Create Account</Text>
@@ -74,29 +92,32 @@ export default function Signup() {
                 <TextInput 
                     placeholder='Username' 
                     style={styles.textinput} 
-                    onChangeText={(value) => setUsername(value)}
+                    onChangeText={setUsername}
                 />
-                <Text style={{ marginTop: 10}}>Email</Text>
+
+                <Text style={{ marginTop: 10 }}>Email</Text>
                 <TextInput 
                     placeholder='Email' 
                     style={styles.textinput} 
-                    onChangeText={(value) => setEmail(value)} 
+                    onChangeText={setEmail} 
+                    keyboardType="email-address"
+                    autoCapitalize="none"
                 />
 
                 <Text style={{ marginTop: 10 }}>Password</Text>
                 <TextInput 
                     placeholder='Password' 
                     style={styles.textinput} 
-                    secureTextEntry={true} 
-                    onChangeText={(value) => setPassword(value)} 
+                    secureTextEntry 
+                    onChangeText={setPassword} 
                 />
 
                 <Text style={{ marginTop: 10 }}>Confirm Password</Text>
                 <TextInput 
                     placeholder='Confirm Password' 
                     style={styles.textinput} 
-                    secureTextEntry={true} 
-                    onChangeText={(value) => setConfirmPassword(value)}
+                    secureTextEntry 
+                    onChangeText={setConfirmPassword}
                 />
 
                 <TouchableOpacity style={styles.button} onPress={OnCreateAccount}>
@@ -113,10 +134,6 @@ const styles = StyleSheet.create({
         top: 40,
         left: 20,
         zIndex: 10,
-    },
-    backArrow: {
-        fontSize: 30,
-        color: colours.DRED,
     },
     Header: {
         fontSize: 50,
@@ -138,7 +155,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
         borderRadius: 8,
         marginTop: 10,
-        color: "#000000"
+        color: "#000000",
+        borderColor: "#ccc"
     },
     button: {
         marginTop: 40,

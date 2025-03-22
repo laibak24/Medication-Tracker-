@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { auth } from "../../config/FirebaseConfig";
 import { MaterialIcons } from '@expo/vector-icons'; // Corrected import
 import { signOut } from 'firebase/auth';
+import Header from '../../components/Header';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -19,14 +20,8 @@ export default function HomeScreen() {
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      {/* Logout Icon Positioned at Top Right */}
-      <View style={{ position: "absolute", top: 20, right: 20 }}>
-        <TouchableOpacity onPress={handleLogout}>
-          <MaterialIcons name="logout" size={30} color="black" />
-        </TouchableOpacity>
-      </View>
-
-      <Text>HomeScreen</Text>
+      <Text>ADD: NO MED + CURRENT MEDS</Text>
+      <Header/>
     </View>
   );
 }

@@ -10,7 +10,7 @@ import { useRouter } from "expo-router";
 export default function TabLayout() {
   const auth = getAuth();
   const router = useRouter();
-  const [authenticated, setAuthenticated] = useState(null); 
+  const [authenticated, setAuthenticated] = useState(null);
 
   // Handle user authentication state
   useEffect(() => {
@@ -29,9 +29,18 @@ export default function TabLayout() {
   // Redirect to login if not authenticated
   useEffect(() => {
     if (authenticated === false) {
-      router.push("login/");
+      router.push("/login");
     }
   }, [authenticated]);
+
+  // Show loading while authentication state is being determined
+  if (authenticated === null) {
+    return (
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <Tabs screenOptions={{ headerShown: false }}>
@@ -40,7 +49,7 @@ export default function TabLayout() {
         options={{
           tabBarLabel: "Profile",
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="face-man-profile" size={24} color="black" />
+            <MaterialCommunityIcons name="face-man-profile" size={size} color={color} />
           ),
         }}
       />
@@ -48,14 +57,14 @@ export default function TabLayout() {
         name="AddNew"
         options={{
           tabBarLabel: "Add",
-          tabBarIcon: ({ color, size }) => <MaterialIcons name="add-box" size={24} color="black" />,
+          tabBarIcon: ({ color, size }) => <MaterialIcons name="add-box" size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="index"
         options={{
           tabBarLabel: "Home",
-          tabBarIcon: ({ color, size }) => <Entypo name="home" size={24} color="black" />,
+          tabBarIcon: ({ color, size }) => <Entypo name="home" size={size} color={color} />,
         }}
       />
     </Tabs>
