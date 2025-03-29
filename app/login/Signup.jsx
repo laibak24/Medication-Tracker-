@@ -119,7 +119,6 @@ export default function Signup() {
                     secureTextEntry 
                     onChangeText={setConfirmPassword}
                 />
-
                 <TouchableOpacity style={styles.button} onPress={OnCreateAccount}>
                     <Text style={styles.buttonText}>Sign Up</Text>
                 </TouchableOpacity>

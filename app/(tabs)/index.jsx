@@ -1,8 +1,7 @@
 import React from 'react';
 import { Text, View, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
-import { auth } from "../../config/FirebaseConfig";
-import { MaterialIcons } from '@expo/vector-icons'; // Corrected import
+import { auth } from "../../config/FirebaseConfig";   
 import { signOut } from 'firebase/auth';
 import Header from '../../components/Header';
 
