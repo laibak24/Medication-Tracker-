@@ -1,0 +1,24 @@
+/MEDICATION-TRACKER  # Root directory
+│── /android  # Native Android code (auto-generated)
+│── /ios      # Native iOS code (auto-generated)
+│── /src      # Main source code folder
+│   │── /assets        # Static assets (images, fonts, icons, etc.)
+│   │── /components    # Reusable UI components
+│   │── /screens       # Screen components for navigation
+│   │── /navigation    # Navigation setup (React Navigation, etc.)
+│   │── /redux         # Redux store, actions, reducers (if using Redux)
+│   │── /contexts      # Context API providers (if using Context API)
+│   │── /constant      # Any constants that we have
+│   │── /hooks         # Custom hooks for business logic
+│   │── /utils         # Utility/helper functions
+│   │── /services      # API calls, authentication, etc.
+│   │── /config        # App configurations (environment variables, constants)
+│   │── App.js         # Main app entry point
+│   │── index.js       # Entry point for React Native
+│── /node_modules      # Dependencies
+│── .gitignore         # Git ignore file
+│── package.json       # Dependencies and scripts
+│── babel.config.js    # Babel configuration
+│── metro.config.js    # Metro bundler config
+│── app.json           # App metadata
+│── README.md          # Project documentation
