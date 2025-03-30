@@ -1,16 +1,20 @@
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-export default function AddNew() {
+const AddNew = () => {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
+    <View styles = {styles.container} >
       <Text>AddNew</Text>
     </View>
-  );
+  )
 }
+
+export default AddNew
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+  }
+})
