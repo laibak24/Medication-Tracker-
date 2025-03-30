@@ -1,11 +1,12 @@
 import React from 'react';
-import { Text, View, TouchableOpacity } from "react-native";
+import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { auth } from "../../config/FirebaseConfig";
-import { MaterialIcons } from '@expo/vector-icons'; // Corrected import
+import { MaterialIcons } from '@expo/vector-icons';
 import { signOut } from 'firebase/auth';
+import Profilescreen from '../../components/Profilescreen';
 
-export default function Profile() {
+const Profile = () => {
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -18,22 +19,23 @@ export default function Profile() {
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-            {/* Logout Icon Positioned at Top Right */}
-            <View style={{ position: "absolute", top: 20, right: 20 }}>
+    <View>
+      <View style={styles.logoutButton}>
         <TouchableOpacity onPress={handleLogout}>
           <MaterialIcons name="logout" size={30} color="black" />
         </TouchableOpacity>
       </View>
-
-
-      <Text>Profile</Text>
+      <Profilescreen />
     </View>
   );
-}
+};
+
+export default Profile;
+
+const styles = StyleSheet.create({
+  logoutButton: {
+    position: "absolute",
+    top: 20,
+    right: 20,
+  },
+});
