@@ -37,13 +37,21 @@ export default function Signin() {
     console.log(errorCode);
 
     if (errorCode === 'auth/invalid-credential') {
-      if (Platform.OS === "android") {
-        ToastAndroid.show('Invalid Email or Password.', ToastAndroid.LONG);
-      } else {
-        Alert.alert("Error", "Invalid Email or Password.");
-      }
+        if (Platform.OS === "android") {
+            ToastAndroid.show('Invalid Email or Password.', ToastAndroid.LONG);
+        } else {
+            Alert.alert("Error", "Invalid Email or Password.");
+        }
+    } 
+    else if (errorCode === 'auth/too-many-requests') {
+        if (Platform.OS === "android") {
+            ToastAndroid.show('Too many requests please try again later.', ToastAndroid.LONG);
+        } else {
+            Alert.alert("Error", "Too many requests please try again later.");
+        }
     }
-  });
+})
+   
 
   };
 
