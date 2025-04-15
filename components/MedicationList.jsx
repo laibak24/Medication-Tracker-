@@ -5,7 +5,7 @@ import { getLocalStorage } from '@/service/Storage';
 import { db } from '@/config/FirebaseConfig';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-
+import EmptyState from '../components/EmptyState' 
 const { width } = Dimensions.get('window');
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const medIcons = {
@@ -132,11 +132,16 @@ export default function MedicationList() {
 
       {/* Medication List */}
       <View style={styles.listContainer}>
-      <FlatList
-        data={medList}
-        keyExtractor={(item, index) => index.toString()}
-        contentContainerStyle={styles.medList}
-        renderItem={({ item }) => (
+  {medList.length === 0 ? (
+    <View style={styles.container}>
+      <EmptyState />
+    </View>
+  ) : (
+    <FlatList
+      data={medList}
+      keyExtractor={(item, index) => index.toString()}
+      contentContainerStyle={styles.medList}
+      renderItem={({ item }) => (
           <View style={styles.medCard}>
             <MaterialCommunityIcons
               name={medIcons[item.medType] || 'pill'}
@@ -160,6 +165,7 @@ export default function MedicationList() {
           </View>
         )}
       />
+  )}
     </View>
     </View>
   );
