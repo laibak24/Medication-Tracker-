@@ -6,6 +6,7 @@ import { db } from '@/config/FirebaseConfig';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import EmptyState from '../components/EmptyState' 
+import { router } from 'expo-router';
 const { width } = Dimensions.get('window');
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const medIcons = {
@@ -29,7 +30,6 @@ export default function MedicationList() {
     const monthEnd = baseDate.clone().endOf('month');
     const startDate = monthStart.clone().startOf('week');
     const endDate = monthEnd.clone().endOf('week');
-    
     const days = [];
     let date = startDate.clone();
     
@@ -138,34 +138,43 @@ export default function MedicationList() {
     </View>
   ) : (
     <FlatList
-      data={medList}
-      keyExtractor={(item, index) => index.toString()}
-      contentContainerStyle={styles.medList}
-      renderItem={({ item }) => (
-          <View style={styles.medCard}>
-            <MaterialCommunityIcons
-              name={medIcons[item.medType] || 'pill'}
-              size={40}
-              color="#F44C61"
-              style={styles.medIcon}
-            />
-            <View style={styles.medInfo}>
-              <Text style={styles.medName}>{item.medName}</Text>
-              <View style={styles.detailsRow}>
-                <Text style={styles.medDetail}>{item.medType}</Text>
-                <Text style={styles.medDetail}>•</Text>
-                <Text style={styles.medDetail}>{item.dose} dose(s)</Text>
-              </View>
-              <View style={styles.detailsRow}>
-                <Text style={styles.medDetail}>{item.mealTime}</Text>
-                <Text style={styles.medDetail}>•</Text>
-                <Text style={styles.medDetail}>{item.timeToTake}</Text>
-              </View>
+    data={medList}
+    keyExtractor={(item, index) => index.toString()}
+    contentContainerStyle={styles.medList}
+    renderItem={({ item }) => (
+      <TouchableOpacity onPress={() => router.push({
+        pathname:'/action-modal',
+        params:{
+          ...item,
+          selectedDate:selectedDate
+        }
+
+      })}>
+        <View style={styles.medCard}>
+          <MaterialCommunityIcons
+            name={medIcons[item.medType] || 'pill'}
+            size={40}
+            color="#F44C61"
+            style={styles.medIcon}
+          />
+          <View style={styles.medInfo}>
+            <Text style={styles.medName}>{item.medName}</Text>
+            <View style={styles.detailsRow}>
+              <Text style={styles.medDetail}>{item.medType}</Text>
+              <Text style={styles.medDetail}>•</Text>
+              <Text style={styles.medDetail}>{item.dose} dose(s)</Text>
+            </View>
+            <View style={styles.detailsRow}>
+              <Text style={styles.medDetail}>{item.mealTime}</Text>
+              <Text style={styles.medDetail}>•</Text>
+              <Text style={styles.medDetail}>{item.timeToTake}</Text>
             </View>
           </View>
-        )}
-      />
-  )}
+        </View>
+      </TouchableOpacity>
+    )}
+  />
+   )}
     </View>
     </View>
   );

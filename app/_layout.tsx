@@ -8,6 +8,11 @@ export default function RootLayout() {
       }}>
     <Stack.Screen name="login/index"/>
     <Stack.Screen name="(tabs)"/>
+    <Stack.Screen name="action-modal"
+    options={
+      {presentation:'modal'}
+    }/>
+
     </Stack>
 
   )
