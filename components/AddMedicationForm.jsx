@@ -482,6 +482,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     color: '#000', // Main picker text color
   },
+  //commit fix
   pickerWrapper: {
     flex: 1,
     backgroundColor: "#fff",
