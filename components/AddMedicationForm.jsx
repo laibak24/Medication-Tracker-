@@ -32,11 +32,23 @@ const Options = ({ selectedOption, onSelect, options }) => (
       const IconComponent = item.library || MaterialCommunityIcons;
       return (
         <TouchableOpacity
-          style={[styles.option, selectedOption === item.id && styles.selectedOption]}
+          style={[
+            styles.option,
+            selectedOption === item.id && styles.selectedOption,
+          ]}
           onPress={() => onSelect(item.id)}
         >
-          <IconComponent name={item.icon} size={24} color={selectedOption === item.id ? "#fff" : "#444"} />
-          <Text style={[styles.optionText, selectedOption === item.id && styles.selectedText]}>
+          <IconComponent
+            name={item.icon}
+            size={24}
+            color={selectedOption === item.id ? "#fff" : "#444"}
+          />
+          <Text
+            style={[
+              styles.optionText,
+              selectedOption === item.id && styles.selectedText,
+            ]}
+          >
             {item.label}
           </Text>
         </TouchableOpacity>
@@ -99,7 +111,10 @@ export default function AddMedicationForm() {
         medType,
         dose,
         mealTime,
-        timeToTake: timeToTake.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        timeToTake: timeToTake.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),
         userEmail: user?.email || "unknown",
@@ -119,7 +134,13 @@ export default function AddMedicationForm() {
     }
   };
 
-  const renderDateTimePicker = (mode, value, onChange, showPicker, setShowPicker) => {
+  const renderDateTimePicker = (
+    mode,
+    value,
+    onChange,
+    showPicker,
+    setShowPicker
+  ) => {
     if (Platform.OS === "ios" && showPicker) {
       return (
         <Modal transparent animationType="slide">
@@ -138,23 +159,26 @@ export default function AddMedicationForm() {
                   if (date) onChange(date);
                 }}
                 style={styles.iosPicker}
+                textColor="#000" // Add this line for iOS DateTimePicker
               />
             </View>
           </SafeAreaView>
         </Modal>
       );
     }
-    
-    return showPicker && (
-      <DateTimePicker
-        value={value}
-        mode={mode}
-        display="default"
-        onChange={(event, date) => {
-          setShowPicker(false);
-          if (date) onChange(date);
-        }}
-      />
+
+    return (
+      showPicker && (
+        <DateTimePicker
+          value={value}
+          mode={mode}
+          display="default"
+          onChange={(event, date) => {
+            setShowPicker(false);
+            if (date) onChange(date);
+          }}
+        />
+      )
     );
   };
 
@@ -181,10 +205,30 @@ export default function AddMedicationForm() {
             selectedOption={medType}
             onSelect={setMedType}
             options={[
-              { id: "Tablet", label: "Tablet", icon: "pills", library: FontAwesome5 },
-              { id: "Capsule", label: "Capsule", icon: "capsules", library: FontAwesome5 },
-              { id: "Syrup", label: "Syrup", icon: "flask", library: FontAwesome5 },
-              { id: "Injection", label: "Injection", icon: "syringe", library: FontAwesome5 },
+              {
+                id: "Tablet",
+                label: "Tablet",
+                icon: "pills",
+                library: FontAwesome5,
+              },
+              {
+                id: "Capsule",
+                label: "Capsule",
+                icon: "capsules",
+                library: FontAwesome5,
+              },
+              {
+                id: "Syrup",
+                label: "Syrup",
+                icon: "flask",
+                library: FontAwesome5,
+              },
+              {
+                id: "Injection",
+                label: "Injection",
+                icon: "syringe",
+                library: FontAwesome5,
+              },
             ]}
           />
 
@@ -205,8 +249,8 @@ export default function AddMedicationForm() {
                 <Picker
                   selectedValue={mealTime}
                   onValueChange={setMealTime}
-                  style={styles.picker}
-                  itemStyle={styles.pickerItem}
+                  style={styles.iosPicker}
+                  itemStyle={styles.pickerItem} // Add this line
                 >
                   <Picker.Item label="Breakfast" value="Breakfast" />
                   <Picker.Item label="Lunch" value="Lunch" />
@@ -229,7 +273,9 @@ export default function AddMedicationForm() {
                     <SafeAreaView style={styles.modalOverlay}>
                       <View style={styles.modalContainer}>
                         <View style={styles.modalHeader}>
-                          <TouchableOpacity onPress={() => setShowMealPicker(false)}>
+                          <TouchableOpacity
+                            onPress={() => setShowMealPicker(false)}
+                          >
                             <Text style={styles.modalDoneButton}>Done</Text>
                           </TouchableOpacity>
                         </View>
@@ -249,13 +295,20 @@ export default function AddMedicationForm() {
               )}
             </View>
 
-            <TouchableOpacity 
-              style={styles.timeButton} 
+            <TouchableOpacity
+              style={styles.timeButton}
               onPress={() => setShowTimePicker(true)}
             >
-              <MaterialCommunityIcons name="clock-outline" size={22} color="#007bff" />
+              <MaterialCommunityIcons
+                name="clock-outline"
+                size={22}
+                color="#007bff"
+              />
               <Text style={styles.timeText}>
-                {timeToTake.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                {timeToTake.toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </Text>
             </TouchableOpacity>
           </View>
@@ -271,8 +324,8 @@ export default function AddMedicationForm() {
           <Text style={styles.label}>Schedule</Text>
           <View style={styles.dateRow}>
             <View style={{ flex: 1, marginRight: 8 }}>
-              <TouchableOpacity 
-                style={styles.dateButton} 
+              <TouchableOpacity
+                style={styles.dateButton}
                 onPress={() => setShowStartPicker(true)}
               >
                 <Text style={styles.dateText}>{startDate.toDateString()}</Text>
@@ -287,8 +340,8 @@ export default function AddMedicationForm() {
             </View>
 
             <View style={{ flex: 1, marginLeft: 8 }}>
-              <TouchableOpacity 
-                style={styles.dateButton} 
+              <TouchableOpacity
+                style={styles.dateButton}
                 onPress={() => setShowEndPicker(true)}
               >
                 <Text style={styles.dateText}>{endDate.toDateString()}</Text>
@@ -303,8 +356,16 @@ export default function AddMedicationForm() {
             </View>
           </View>
 
-          <TouchableOpacity style={styles.button} onPress={SaveMedication} disabled={loading}>
-            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Set Reminder</Text>}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={SaveMedication}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Set Reminder</Text>
+            )}
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -344,7 +405,7 @@ const styles = StyleSheet.create({
   },
   dateButton: {
     backgroundColor: "#fff",
-    color : '#000',
+    color: "#000",
     padding: 14,
     borderRadius: 10,
     borderWidth: 1,
@@ -371,7 +432,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",
-    color: '#000',
+    color: "#000",
     borderColor: "#bbb",
     borderWidth: 1,
     paddingHorizontal: 14,
@@ -387,37 +448,39 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0,0,0,0.3)",
   },
   modalContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingHorizontal: 16,
     paddingBottom: 40,
   },
   modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    flexDirection: "row",
+    justifyContent: "flex-end",
     paddingVertical: 16,
-    borderBottomColor: '#ccc',
+    borderBottomColor: "#ccc",
     borderBottomWidth: 1,
   },
   modalDoneButton: {
-    color: '#007bff',
+    color: "#007bff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     padding: 8,
   },
   pickerItem: {
-    color: '#000', // Force black text on iOS
+    color: '#000', // Black text for all items
+    backgroundColor: '#fff', // White background for items
+    fontSize: 20, // Optional: increase readability
   },
   iosPicker: {
     height: 180,
     marginTop: -10,
-        backgroundColor: '#fff',
-        color: '#000',
+    backgroundColor: '#fff',
+    color: '#000', // Main picker text color
   },
   pickerWrapper: {
     flex: 1,
