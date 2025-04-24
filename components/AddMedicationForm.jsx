@@ -32,23 +32,11 @@ const Options = ({ selectedOption, onSelect, options }) => (
       const IconComponent = item.library || MaterialCommunityIcons;
       return (
         <TouchableOpacity
-          style={[
-            styles.option,
-            selectedOption === item.id && styles.selectedOption,
-          ]}
+          style={[styles.option, selectedOption === item.id && styles.selectedOption]}
           onPress={() => onSelect(item.id)}
         >
-          <IconComponent
-            name={item.icon}
-            size={24}
-            color={selectedOption === item.id ? "#fff" : "#444"}
-          />
-          <Text
-            style={[
-              styles.optionText,
-              selectedOption === item.id && styles.selectedText,
-            ]}
-          >
+          <IconComponent name={item.icon} size={24} color={selectedOption === item.id ? "#fff" : "#444"} />
+          <Text style={[styles.optionText, selectedOption === item.id && styles.selectedText]}>
             {item.label}
           </Text>
         </TouchableOpacity>
@@ -104,6 +92,7 @@ export default function AddMedicationForm() {
 
     try {
       const user = await getLocalStorage("userDetail");
+
       setLoading(true);
 
       const medicationData = {
@@ -111,10 +100,7 @@ export default function AddMedicationForm() {
         medType,
         dose,
         mealTime,
-        timeToTake: timeToTake.toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
+        timeToTake: timeToTake.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),
         userEmail: user?.email || "unknown",
@@ -134,60 +120,12 @@ export default function AddMedicationForm() {
     }
   };
 
-  const renderDateTimePicker = (
-    mode,
-    value,
-    onChange,
-    showPicker,
-    setShowPicker
-  ) => {
-    if (Platform.OS === "ios" && showPicker) {
-      return (
-        <Modal transparent animationType="slide">
-          <SafeAreaView style={styles.modalOverlay}>
-            <View style={styles.modalContainer}>
-              <View style={styles.modalHeader}>
-                <TouchableOpacity onPress={() => setShowPicker(false)}>
-                  <Text style={styles.modalDoneButton}>Done</Text>
-                </TouchableOpacity>
-              </View>
-              <DateTimePicker
-                value={value}
-                mode={mode}
-                display={mode === "time" ? "spinner" : "inline"}
-                onChange={(event, date) => {
-                  if (date) onChange(date);
-                }}
-                style={styles.iosPicker}
-                textColor="#000" // Add this line for iOS DateTimePicker
-              />
-            </View>
-          </SafeAreaView>
-        </Modal>
-      );
-    }
-
-    return (
-      showPicker && (
-        <DateTimePicker
-          value={value}
-          mode={mode}
-          display="default"
-          onChange={(event, date) => {
-            setShowPicker(false);
-            if (date) onChange(date);
-          }}
-        />
-      )
-    );
-  };
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f4f6f9" }}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
-        keyboardVerticalOffset={100}
+        keyboardVerticalOffset={90}
       >
         <ScrollView style={styles.container}>
           <Text style={styles.title}>Add New Medication</Text>
@@ -205,30 +143,10 @@ export default function AddMedicationForm() {
             selectedOption={medType}
             onSelect={setMedType}
             options={[
-              {
-                id: "Tablet",
-                label: "Tablet",
-                icon: "pills",
-                library: FontAwesome5,
-              },
-              {
-                id: "Capsule",
-                label: "Capsule",
-                icon: "capsules",
-                library: FontAwesome5,
-              },
-              {
-                id: "Syrup",
-                label: "Syrup",
-                icon: "flask",
-                library: FontAwesome5,
-              },
-              {
-                id: "Injection",
-                label: "Injection",
-                icon: "syringe",
-                library: FontAwesome5,
-              },
+              { id: "Tablet", label: "Tablet", icon: "pills", library: FontAwesome5 },
+              { id: "Capsule", label: "Capsule", icon: "capsules", library: FontAwesome5 },
+              { id: "Syrup", label: "Syrup", icon: "flask", library: FontAwesome5 },
+              { id: "Injection", label: "Injection", icon: "syringe", library: FontAwesome5 },
             ]}
           />
 
@@ -245,127 +163,131 @@ export default function AddMedicationForm() {
           <Text style={styles.label}>Time to Take</Text>
           <View style={styles.timeRow}>
             <View style={styles.pickerWrapper}>
-              {Platform.OS === "android" ? (
-                <Picker
-                  selectedValue={mealTime}
-                  onValueChange={setMealTime}
-                  style={styles.iosPicker}
-                  itemStyle={styles.pickerItem} // Add this line
-                >
-                  <Picker.Item label="Breakfast" value="Breakfast" />
-                  <Picker.Item label="Lunch" value="Lunch" />
-                  <Picker.Item label="Dinner" value="Dinner" />
-                </Picker>
-              ) : (
-                <>
-                  <TouchableOpacity
-                    style={styles.dateButton}
-                    onPress={() => setShowMealPicker(true)}
-                  >
-                    <Text style={styles.dateText}>{mealTime}</Text>
-                  </TouchableOpacity>
+            {Platform.OS === "android" ? (
+  <Picker
+    selectedValue={mealTime}
+    onValueChange={(itemValue) => setMealTime(itemValue)}
+    style={styles.picker}
+  >
+    <Picker.Item label="Breakfast" value="Breakfast" />
+    <Picker.Item label="Lunch" value="Lunch" />
+    <Picker.Item label="Dinner" value="Dinner" />
+  </Picker>
+) : (
+  <>
+    <TouchableOpacity
+      style={styles.dateButton}
+      onPress={() => setShowMealPicker(true)}
+    >
+      <Text style={styles.dateText}>{mealTime}</Text>
+    </TouchableOpacity>
 
-                  <Modal
-                    visible={showMealPicker}
-                    transparent
-                    animationType="slide"
-                  >
-                    <SafeAreaView style={styles.modalOverlay}>
-                      <View style={styles.modalContainer}>
-                        <View style={styles.modalHeader}>
-                          <TouchableOpacity
-                            onPress={() => setShowMealPicker(false)}
-                          >
-                            <Text style={styles.modalDoneButton}>Done</Text>
-                          </TouchableOpacity>
-                        </View>
-                        <Picker
-                          selectedValue={mealTime}
-                          onValueChange={setMealTime}
-                          style={styles.iosPicker}
-                        >
-                          <Picker.Item label="Breakfast" value="Breakfast" />
-                          <Picker.Item label="Lunch" value="Lunch" />
-                          <Picker.Item label="Dinner" value="Dinner" />
-                        </Picker>
-                      </View>
-                    </SafeAreaView>
-                  </Modal>
-                </>
-              )}
-            </View>
+    <Modal
+      visible={showMealPicker}
+      transparent
+      animationType="slide"
+    >
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <TouchableOpacity onPress={() => setShowMealPicker(false)}>
+              <Text style={{ color: "#007bff", fontSize: 16, fontWeight: "600" }}>Done</Text>
+            </TouchableOpacity>
+          </View>
+          <Picker
+            selectedValue={mealTime}
+            onValueChange={(itemValue) => setMealTime(itemValue)}
+            style={{ height: 200 }}
+          >
+            <Picker.Item label="Breakfast" value="Breakfast" />
+            <Picker.Item label="Lunch" value="Lunch" />
+            <Picker.Item label="Dinner" value="Dinner" />
+          </Picker>
+        </View>
+      </View>
+    </Modal>
+  </>
+)}
+   </View>
 
-            <TouchableOpacity
-              style={styles.timeButton}
-              onPress={() => setShowTimePicker(true)}
-            >
-              <MaterialCommunityIcons
-                name="clock-outline"
-                size={22}
-                color="#007bff"
-              />
+            <TouchableOpacity style={styles.timeButton} onPress={() => setShowTimePicker(true)}>
+              <MaterialCommunityIcons name="clock-outline" size={22} color="#007bff" />
               <Text style={styles.timeText}>
-                {timeToTake.toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
+                {timeToTake.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
               </Text>
             </TouchableOpacity>
           </View>
 
-          {renderDateTimePicker(
-            "time",
-            timeToTake,
-            setTimeToTake,
-            showTimePicker,
-            setShowTimePicker
+          {showTimePicker && (
+            <DateTimePicker
+              value={timeToTake}
+              mode="time"
+              display={Platform.OS === "ios" ? "spinner" : "default"}
+              is24Hour={false}
+              onChange={(event, selectedTime) => {
+                if (Platform.OS === "ios") {
+                  if (event.type === "set" && selectedTime) {
+                    setTimeToTake(selectedTime);
+                  }
+                } else {
+                  setShowTimePicker(false);
+                  if (selectedTime) setTimeToTake(selectedTime);
+                }
+              }}
+            />
           )}
 
           <Text style={styles.label}>Schedule</Text>
           <View style={styles.dateRow}>
             <View style={{ flex: 1, marginRight: 8 }}>
-              <TouchableOpacity
-                style={styles.dateButton}
-                onPress={() => setShowStartPicker(true)}
-              >
+              <TouchableOpacity style={styles.dateButton} onPress={() => setShowStartPicker(true)}>
                 <Text style={styles.dateText}>{startDate.toDateString()}</Text>
               </TouchableOpacity>
-              {renderDateTimePicker(
-                "date",
-                startDate,
-                setStartDate,
-                showStartPicker,
-                setShowStartPicker
+              {showStartPicker && (
+                <DateTimePicker
+                  value={startDate}
+                  mode="date"
+                  display={Platform.OS === "ios" ? "inline" : "default"}
+                  onChange={(event, date) => {
+                    if (Platform.OS === "ios") {
+                      if (event.type === "set" && date) {
+                        setStartDate(date);
+                      }
+                    } else {
+                      setShowStartPicker(false);
+                      if (date) setStartDate(date);
+                    }
+                  }}
+                />
               )}
             </View>
 
             <View style={{ flex: 1, marginLeft: 8 }}>
-              <TouchableOpacity
-                style={styles.dateButton}
-                onPress={() => setShowEndPicker(true)}
-              >
+              <TouchableOpacity style={styles.dateButton} onPress={() => setShowEndPicker(true)}>
                 <Text style={styles.dateText}>{endDate.toDateString()}</Text>
               </TouchableOpacity>
-              {renderDateTimePicker(
-                "date",
-                endDate,
-                setEndDate,
-                showEndPicker,
-                setShowEndPicker
+              {showEndPicker && (
+                <DateTimePicker
+                  value={endDate}
+                  mode="date"
+                  display={Platform.OS === "ios" ? "inline" : "default"}
+                  onChange={(event, date) => {
+                    if (Platform.OS === "ios") {
+                      if (event.type === "set" && date) {
+                        setEndDate(date);
+                      }
+                    } else {
+                      setShowEndPicker(false);
+                      if (date) setEndDate(date);
+                    }
+                  }}
+                />
               )}
             </View>
           </View>
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={SaveMedication}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Set Reminder</Text>
-            )}
+          <TouchableOpacity style={styles.button} onPress={SaveMedication} disabled={loading}>
+            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Set Reminder</Text>}
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -405,7 +327,6 @@ const styles = StyleSheet.create({
   },
   dateButton: {
     backgroundColor: "#fff",
-    color: "#000",
     padding: 14,
     borderRadius: 10,
     borderWidth: 1,
@@ -432,7 +353,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",
-    color: "#000",
     borderColor: "#bbb",
     borderWidth: 1,
     paddingHorizontal: 14,
@@ -455,34 +375,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    paddingHorizontal: 16,
-    paddingBottom: 40,
+    paddingBottom: 30,
   },
   modalHeader: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    paddingVertical: 16,
+    padding: 16,
     borderBottomColor: "#ccc",
     borderBottomWidth: 1,
-  },
-  modalDoneButton: {
-    color: "#007bff",
-    fontSize: 16,
-    fontWeight: "600",
-    padding: 8,
-  },
-  pickerItem: {
-    color: '#000', // Black text for all items
-    backgroundColor: '#fff', // White background for items
-    fontSize: 20, // Optional: increase readability
-  },
-  iosPicker: {
-    height: 180,
-    marginTop: -10,
-    backgroundColor: '#fff',
-    color: '#000', // Main picker text color
-  },
-  //commit fix
+  },  
   pickerWrapper: {
     flex: 1,
     backgroundColor: "#fff",
