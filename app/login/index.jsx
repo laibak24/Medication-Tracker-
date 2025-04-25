@@ -36,14 +36,6 @@ const WelcomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.topIcons}>
-        <TouchableOpacity onPress={() => setInfoModalVisible(true)}>
-          <Ionicons name="information-circle-outline" size={30} color={colours.DBLUE} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setFeedbackModalVisible(true)}>
-          <MaterialIcons name="feedback" size={30} color={colours.DBLUE} />
-        </TouchableOpacity>
-      </View>
 
       <Image source={require("../../assets/images/doctor.png")} style={styles.image} />
 

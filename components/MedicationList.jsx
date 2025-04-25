@@ -1,3 +1,4 @@
+import { Feather, MaterialIcons } from '@expo/vector-icons';
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import moment from 'moment';
@@ -5,8 +6,9 @@ import { getLocalStorage } from '@/service/Storage';
 import { db } from '@/config/FirebaseConfig';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import EmptyState from '../components/EmptyState' 
-import { router } from 'expo-router';
+import EmptyState from '../components/EmptyState';
+import { useFocusEffect, router } from 'expo-router';
+
 const { width } = Dimensions.get('window');
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const medIcons = {
@@ -21,10 +23,6 @@ export default function MedicationList() {
   const [currentMonth] = useState(moment());
   const [selectedDate, setSelectedDate] = useState(moment.utc().startOf('day'));
 
-  useEffect(() => {
-    GetMedicationList(selectedDate.format('YYYY-MM-DD'));
-  }, [selectedDate]);
-
   const generateMonthData = (baseDate) => {
     const monthStart = baseDate.clone().startOf('month');
     const monthEnd = baseDate.clone().endOf('month');
@@ -32,7 +30,7 @@ export default function MedicationList() {
     const endDate = monthEnd.clone().endOf('week');
     const days = [];
     let date = startDate.clone();
-    
+
     while (date.isBefore(endDate)) {
       days.push({
         date: date.date(),
@@ -58,36 +56,42 @@ export default function MedicationList() {
   
       const querySnapshot = await getDocs(q);
       const filteredMeds = [];
-      
-      // Convert to UTC and normalize
+  
       const selected = moment.utc(selectedDateISO).startOf('day');
   
       querySnapshot.forEach((docSnap) => {
         const data = docSnap.data();
-        
-        // Parse dates as UTC and normalize
+  
         const start = moment.utc(data.startDate).startOf('day');
         const end = moment.utc(data.endDate).endOf('day');
   
-        //console.log('Comparing:', {
-          //selected: selected.format(),
-         // medication: `${start.format()} - ${end.format()}`,
-         // matches: selected.isBetween(start, end, null, '[]')
-        //});
-  
         if (selected.isBetween(start, end, null, '[]')) {
-          filteredMeds.push(data);
+          const statusKey = selectedDateISO;
+          const statusMap = data.statusMap || {};
+  
+          filteredMeds.push({
+            ...data,
+            status: (statusMap[statusKey] || '').toLowerCase(), // ensure lowercase here
+          });
         }
       });
   
-      //console.log('Filtered Medications:', filteredMeds);
       setMedList(filteredMeds);
     } catch (error) {
       console.error('Error fetching medications:', error);
     }
   };
-
   
+  useEffect(() => {
+    GetMedicationList(selectedDate.format('YYYY-MM-DD'));
+  }, [selectedDate]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      GetMedicationList(selectedDate.format('YYYY-MM-DD'));
+    }, [selectedDate])
+  );
+
   const renderDay = ({ item }) => (
     <TouchableOpacity
       style={[
@@ -111,7 +115,7 @@ export default function MedicationList() {
 
   return (
     <View style={styles.container}>
-      {/* Calendar Section - Fixed Height */}
+      {/* Calendar Section */}
       <View style={styles.calendarContainer}>
         <Text style={styles.monthHeader}>
           {currentMonth.format('MMMM YYYY')}
@@ -132,50 +136,60 @@ export default function MedicationList() {
 
       {/* Medication List */}
       <View style={styles.listContainer}>
-  {medList.length === 0 ? (
-    <View style={styles.container}>
-      <EmptyState />
-    </View>
-  ) : (
-    <FlatList
-    data={medList}
-    keyExtractor={(item, index) => index.toString()}
-    contentContainerStyle={styles.medList}
-    renderItem={({ item }) => (
-      <TouchableOpacity onPress={() => router.push({
-        pathname:'/action-modal',
-        params:{
-          ...item,
-          selectedDate:selectedDate
-        }
-
-      })}>
-        <View style={styles.medCard}>
-          <MaterialCommunityIcons
-            name={medIcons[item.medType] || 'pill'}
-            size={40}
-            color="#F44C61"
-            style={styles.medIcon}
-          />
-          <View style={styles.medInfo}>
-            <Text style={styles.medName}>{item.medName}</Text>
-            <View style={styles.detailsRow}>
-              <Text style={styles.medDetail}>{item.medType}</Text>
-              <Text style={styles.medDetail}>•</Text>
-              <Text style={styles.medDetail}>{item.dose} dose(s)</Text>
-            </View>
-            <View style={styles.detailsRow}>
-              <Text style={styles.medDetail}>{item.mealTime}</Text>
-              <Text style={styles.medDetail}>•</Text>
-              <Text style={styles.medDetail}>{item.timeToTake}</Text>
-            </View>
-          </View>
-        </View>
-      </TouchableOpacity>
-    )}
-  />
-   )}
-    </View>
+        {medList.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <FlatList
+          data={medList}
+          keyExtractor={(item, index) => index.toString()}
+          contentContainerStyle={styles.medList}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() =>
+                router.push({
+                  pathname: '/action-modal',
+                  params: {
+                    ...item,
+                    selectedDate: selectedDate,
+                  }
+                })
+              }
+            >
+              <View style={styles.medCard}>
+                {/* Show status icon conditionally for the selected date */}
+                {item?.status === 'taken' ? (
+                  <MaterialIcons name="check-circle" size={20} color="green" style={styles.statusIcon} />
+                ) : item?.status === 'missed' ? (
+                  <MaterialIcons name="cancel" size={20} color="red" style={styles.statusIcon} />
+                ) : (
+                  <MaterialIcons name="help-outline" size={20} color="#9CA3AF" style={styles.statusIcon} />
+                )}
+        
+                <MaterialCommunityIcons
+                  name={medIcons[item.medType] || 'pill'}
+                  size={40}
+                  color="#F44C61"
+                  style={styles.medIcon}
+                />
+                <View style={styles.medInfo}>
+                  <Text style={styles.medName}>{item.medName}</Text>
+                  <View style={styles.detailsRow}>
+                    <Text style={styles.medDetail}>{item.medType}</Text>
+                    <Text style={styles.medDetail}>•</Text>
+                    <Text style={styles.medDetail}>{item.dose} dose(s)</Text>
+                  </View>
+                  <View style={styles.detailsRow}>
+                    <Text style={styles.medDetail}>{item.mealTime}</Text>
+                    <Text style={styles.medDetail}>•</Text>
+                    <Text style={styles.medDetail}>{item.timeToTake}</Text>
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
+          )}
+        />
+        )}
+      </View>
     </View>
   );
 }
@@ -186,16 +200,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#F9FAFB',
   },
   calendarContainer: {
-    height: 380, // Fixed height for calendar
+    height: 380,
     paddingHorizontal: 16,
   },
   listContainer: {
-    flex: 1, // Takes remaining space
+    flex: 1,
     backgroundColor: '#fff',
-  },
-  monthContainer: {
-    paddingHorizontal: 16,
-    marginBottom: 20,
   },
   monthHeader: {
     fontSize: 22,
@@ -257,10 +267,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 32,
   },
-  medListContainer: {
-    flex: 1,
-    backgroundColor: '#000000', // Temporary to verify visibility
-  },
   medCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
@@ -295,5 +301,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6B7280',
     marginRight: 8,
+  },
+  statusIcon: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    zIndex: 1,
   },
 });
