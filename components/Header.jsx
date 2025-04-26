@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        paddingVertical: 26, // Slightly increased for a sleek look
+        paddingVertical: 22, // Slightly increased for a sleek look
         paddingHorizontal: 38, // Increased to make it chic
         backgroundColor: colours.DBLUE,
         borderBottomLeftRadius: 30,

@@ -6,7 +6,6 @@ import { getLocalStorage } from '@/service/Storage';
 import { db } from '@/config/FirebaseConfig';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import EmptyState from '../components/EmptyState';
 import { useFocusEffect, router } from 'expo-router';
 
 const { width } = Dimensions.get('window');
@@ -48,40 +47,40 @@ export default function MedicationList() {
     try {
       const user = await getLocalStorage('userDetail');
       if (!user?.email) return;
-  
+
       const q = query(
         collection(db, 'medications'),
         where('userEmail', '==', user.email)
       );
-  
+
       const querySnapshot = await getDocs(q);
       const filteredMeds = [];
-  
+
       const selected = moment.utc(selectedDateISO).startOf('day');
-  
+
       querySnapshot.forEach((docSnap) => {
         const data = docSnap.data();
-  
+
         const start = moment.utc(data.startDate).startOf('day');
         const end = moment.utc(data.endDate).endOf('day');
-  
+
         if (selected.isBetween(start, end, null, '[]')) {
           const statusKey = selectedDateISO;
           const statusMap = data.statusMap || {};
-  
+
           filteredMeds.push({
             ...data,
-            status: (statusMap[statusKey] || '').toLowerCase(), // ensure lowercase here
+            status: (statusMap[statusKey] || '').toLowerCase(),
           });
         }
       });
-  
+
       setMedList(filteredMeds);
     } catch (error) {
       console.error('Error fetching medications:', error);
     }
   };
-  
+
   useEffect(() => {
     GetMedicationList(selectedDate.format('YYYY-MM-DD'));
   }, [selectedDate]);
@@ -137,57 +136,59 @@ export default function MedicationList() {
       {/* Medication List */}
       <View style={styles.listContainer}>
         {medList.length === 0 ? (
-          <EmptyState />
+          <View style={styles.noMedsContainer}>
+            <Text style={styles.noMedsText}>No Scheduled Medications </Text>
+          </View>
         ) : (
           <FlatList
-          data={medList}
-          keyExtractor={(item, index) => index.toString()}
-          contentContainerStyle={styles.medList}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() =>
-                router.push({
-                  pathname: '/action-modal',
-                  params: {
-                    ...item,
-                    selectedDate: selectedDate,
-                  }
-                })
-              }
-            >
-              <View style={styles.medCard}>
-                {/* Show status icon conditionally for the selected date */}
-                {item?.status === 'taken' ? (
-                  <MaterialIcons name="check-circle" size={20} color="green" style={styles.statusIcon} />
-                ) : item?.status === 'missed' ? (
-                  <MaterialIcons name="cancel" size={20} color="red" style={styles.statusIcon} />
-                ) : (
-                  <MaterialIcons name="help-outline" size={20} color="#9CA3AF" style={styles.statusIcon} />
-                )}
-        
-                <MaterialCommunityIcons
-                  name={medIcons[item.medType] || 'pill'}
-                  size={40}
-                  color="#F44C61"
-                  style={styles.medIcon}
-                />
-                <View style={styles.medInfo}>
-                  <Text style={styles.medName}>{item.medName}</Text>
-                  <View style={styles.detailsRow}>
-                    <Text style={styles.medDetail}>{item.medType}</Text>
-                    <Text style={styles.medDetail}>•</Text>
-                    <Text style={styles.medDetail}>{item.dose} dose(s)</Text>
-                  </View>
-                  <View style={styles.detailsRow}>
-                    <Text style={styles.medDetail}>{item.mealTime}</Text>
-                    <Text style={styles.medDetail}>•</Text>
-                    <Text style={styles.medDetail}>{item.timeToTake}</Text>
+            data={medList}
+            keyExtractor={(item, index) => index.toString()}
+            contentContainerStyle={styles.medList}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() =>
+                  router.push({
+                    pathname: '/action-modal',
+                    params: {
+                      ...item,
+                      selectedDate: selectedDate,
+                    }
+                  })
+                }
+              >
+                <View style={styles.medCard}>
+                  {/* Show status icon conditionally for the selected date */}
+                  {item?.status === 'taken' ? (
+                    <MaterialIcons name="check-circle" size={20} color="green" style={styles.statusIcon} />
+                  ) : item?.status === 'missed' ? (
+                    <MaterialIcons name="cancel" size={20} color="red" style={styles.statusIcon} />
+                  ) : (
+                    <MaterialIcons name="help-outline" size={20} color="#9CA3AF" style={styles.statusIcon} />
+                  )}
+
+                  <MaterialCommunityIcons
+                    name={medIcons[item.medType] || 'pill'}
+                    size={40}
+                    color="#F44C61"
+                    style={styles.medIcon}
+                  />
+                  <View style={styles.medInfo}>
+                    <Text style={styles.medName}>{item.medName}</Text>
+                    <View style={styles.detailsRow}>
+                      <Text style={styles.medDetail}>{item.medType}</Text>
+                      <Text style={styles.medDetail}>•</Text>
+                      <Text style={styles.medDetail}>{item.dose} dose(s)</Text>
+                    </View>
+                    <View style={styles.detailsRow}>
+                      <Text style={styles.medDetail}>{item.mealTime}</Text>
+                      <Text style={styles.medDetail}>•</Text>
+                      <Text style={styles.medDetail}>{item.timeToTake}</Text>
+                    </View>
                   </View>
                 </View>
-              </View>
-            </TouchableOpacity>
-          )}
-        />
+              </TouchableOpacity>
+            )}
+          />
         )}
       </View>
     </View>
@@ -307,5 +308,18 @@ const styles = StyleSheet.create({
     top: 10,
     right: 10,
     zIndex: 1,
+  },
+  noMedsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 32,
+    backgroundColor: '#fff',
+  },
+  noMedsText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#6B7280',
+    textAlign: 'center',
   },
 });
