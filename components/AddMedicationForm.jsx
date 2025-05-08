@@ -152,13 +152,16 @@ export default function AddMedicationForm() {
 
           <Text style={styles.label}>Dosage</Text>
           <TextInput
-            style={[styles.input, { marginTop: 8 }]}
-            placeholder="e.g., 500mg"
-            placeholderTextColor="#666"
-            value={dose}
-            onChangeText={setDose}
-            keyboardType="default"
-          />
+  style={[styles.input, { marginTop: 8 }]}
+  placeholder="e.g., 500"
+  placeholderTextColor="#666"
+  value={dose}
+  onChangeText={(text) => {
+    const numericText = text.replace(/[^0-9]/g, "");
+    setDose(numericText);
+  }}
+  keyboardType="numeric"
+/>
 
           <Text style={styles.label}>Time to Take</Text>
           <View style={styles.timeRow}>
